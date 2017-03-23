@@ -1,4 +1,4 @@
-"""Implements the CAM02-UCS (Luo et al. (2006)) forward transform."""
+"""Implements the CAM02-UCS (Luo et al. (2006)) forward transform symbolically, using Theano."""
 
 import numpy as np
 import theano
