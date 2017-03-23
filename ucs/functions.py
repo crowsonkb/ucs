@@ -32,7 +32,7 @@ def jab_to_jmh(Jab):
     J, a, b = Jab[:, 0], Jab[:, 1], Jab[:, 2]
     M = np.sqrt(a**2 + b**2)
     h = np.rad2deg(np.arctan2(b, a))
-    return np.stack([J, M, h], axis=1)
+    return np.stack([J, M, h], axis=-1)
 
 
 def jmh_to_jab(JMh):
@@ -40,4 +40,4 @@ def jmh_to_jab(JMh):
     J, M, h = JMh[:, 0], JMh[:, 1], JMh[:, 2]
     a = M * np.cos(np.deg2rad(h))
     b = M * np.sin(np.deg2rad(h))
-    return np.stack([J, a, b], axis=1)
+    return np.stack([J, a, b], axis=-1)
