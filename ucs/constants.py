@@ -1,3 +1,5 @@
+"""Constants required by CAM02-UCS or which are otherwise useful."""
+
 import numpy as np
 import theano
 
@@ -7,6 +9,7 @@ floatX = getattr(np, theano.config.floatX)
 
 
 class Surrounds:
+    """CIECAM02 surround conditions."""
     AVERAGE = dict(F=1, c=0.69, N_c=1)
     DIM = dict(F=0.9, c=0.59, N_c=0.95)
     DARK = dict(F=0.8, c=0.525, N_c=0.8)
