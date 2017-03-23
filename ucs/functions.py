@@ -6,10 +6,17 @@ import numpy as np
 import theano
 import theano.tensor as T
 
+from .constants import EPS, M_SRGB_to_XYZ
 from . import symbolic
 
 _srgb_to_ucs = None
 _ucs_to_srgb_grad = None
+
+
+def srgb_to_xyz(RGB):
+    """Converts sRGB (gamma=2.2) colors to XYZ."""
+    RGB_linear = np.maximum(EPS, RGB)**2.2
+    return np.dot(RGB_linear, M_SRGB_to_XYZ)
 
 
 def srgb_to_ucs(RGB, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
