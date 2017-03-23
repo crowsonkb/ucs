@@ -26,7 +26,7 @@ def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     RGB_aw = 400 * RGB_aw_i / (RGB_aw_i + 27.13) + 0.1
     A_w = (T.sum(RGB_aw * [2, 1, 1/20], axis=-1) - 0.305) * N_bb
 
-    RGB_linear = T.sgn(RGB) * abs(RGB)**2.2
+    RGB_linear = T.maximum(0, RGB)**2.2
     XYZ = T.dot(RGB_linear, sRGB_to_XYZ) * Y_w
     RGB_ = T.dot(XYZ, M_CAT02)
     RGB_c = D_rgb * RGB_
@@ -44,7 +44,7 @@ def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     e_t = (T.cos(h_p * np.pi / 180 + 2) + 3.8) / 4
 
     A = (T.sum(RGB_ap * [2, 1, 1/20], axis=-1) - 0.305) * N_bb
-    J = 100 * (A / A_w)**(c * z)
+    J = 100 * T.maximum(0, A / A_w)**(c * z)
     t = 50000/13 * N_c * N_cb * e_t * T.sqrt(a**2 + b**2) / T.sum(RGB_ap * [1, 1, 21/20], axis=-1)
     C = t**0.9 * T.sqrt(J / 100) * (1.64 - 0.29**n)**0.73
     M = C * F_L**0.25
