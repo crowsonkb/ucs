@@ -1,14 +1,10 @@
-from collections import namedtuple
-
 import numpy as np
-
-Surround = namedtuple('Surround', 'F c N_c')
 
 
 class Surrounds:
-    AVERAGE = Surround(1, 0.69, 1)
-    DIM = Surround(0.9, 0.59, 0.95)
-    DARK = Surround(0.8, 0.525, 0.8)
+    AVERAGE = dict(F=1, c=0.69, N_c=1)
+    DIM = dict(F=0.9, c=0.59, N_c=0.95)
+    DARK = dict(F=0.8, c=0.525, N_c=0.8)
 
 M_CAT02 = np.float64(
     [[0.7328, 0.4296, -0.1624],

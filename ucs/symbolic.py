@@ -82,8 +82,8 @@ def jmh_to_jab(JMh):
 def main():
     """A simple test case."""
     rgb1, rgb2 = T.matrices('rgb1', 'rgb2')
-    jab1 = srgb_to_ucs(rgb1, 20, 20, *Surrounds.AVERAGE)
-    jab2 = srgb_to_ucs(rgb2, 20, 20, *Surrounds.AVERAGE)
+    jab1 = srgb_to_ucs(rgb1, 20, 20, **Surrounds.AVERAGE)
+    jab2 = srgb_to_ucs(rgb2, 20, 20, **Surrounds.AVERAGE)
     loss = delta_e(jab1, jab2)**2
     grad_ = T.grad(loss, rgb2)
     grad = theano.function([rgb1, rgb2], grad_)
