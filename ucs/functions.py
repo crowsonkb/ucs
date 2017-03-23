@@ -9,7 +9,7 @@ from . import symbolic
 _srgb_to_ucs = None
 
 
-def srgb_to_ucs(RGB, L_A, Y_b, F, c, N_c):
+def srgb_to_ucs(RGB, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
     """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. (2006)) Jab."""
     global _srgb_to_ucs
 
