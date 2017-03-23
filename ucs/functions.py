@@ -1,5 +1,7 @@
 """Compiled Theano functions, as well as NumPy equivalents of other symbolic functions."""
 
+import sys
+
 import numpy as np
 import theano
 import theano.tensor as T
@@ -15,6 +17,7 @@ def srgb_to_ucs(RGB, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
     global _srgb_to_ucs
 
     if _srgb_to_ucs is None:
+        print('Building srgb_to_ucs()...', file=sys.stderr)
         rgb = T.matrix('rgb')
         conditions = T.scalars('Y_w', 'L_A', 'Y_b', 'F', 'c', 'N_c')
         ucs = symbolic.srgb_to_ucs(rgb, *conditions)
@@ -29,6 +32,7 @@ def ucs_to_srgb_grad(X, Jab, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
     global _ucs_to_srgb_grad
 
     if _ucs_to_srgb_grad is None:
+        print('Building ucs_to_srgb_grad()...', file=sys.stderr)
         conditions = T.scalars('Y_w', 'L_A', 'Y_b', 'F', 'c', 'N_c')
         x, jab = T.matrices('x', 'jab')
         jab_x = symbolic.srgb_to_ucs(x, *conditions)
