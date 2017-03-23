@@ -9,7 +9,7 @@ setuptools.setup(
     version='0.1',
     description='Implements the CAM02-UCS forward transform symbolically, using Theano.',
     long_description=(basedir/'README.rst').read_text(),
-    url='https://github.com/crowsonkb/luo2006',
+    url='https://github.com/crowsonkb/ucs',
     author='Katherine Crowson',
     author_email='crowsonkb@gmail.com',
     license='MIT',
