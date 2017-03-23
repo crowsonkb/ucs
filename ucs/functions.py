@@ -9,17 +9,17 @@ from . import symbolic
 _srgb_to_ucs = None
 
 
-def srgb_to_ucs(RGB, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
+def srgb_to_ucs(RGB, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
     """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. (2006)) Jab."""
     global _srgb_to_ucs
 
     if _srgb_to_ucs is None:
         rgb = T.matrix('rgb')
-        _L_A, _Y_b, _F, _c, _N_c = T.scalars('L_A', 'Y_b', 'F', 'c', 'N_c')
-        ucs = symbolic.srgb_to_ucs(rgb, _L_A, _Y_b, _F, _c, _N_c)
-        _srgb_to_ucs = theano.function([rgb, _L_A, _Y_b, _F, _c, _N_c], ucs,
+        _Y_w, _L_A, _Y_b, _F, _c, _N_c = T.scalars('Y_w', 'L_A', 'Y_b', 'F', 'c', 'N_c')
+        ucs = symbolic.srgb_to_ucs(rgb, _Y_w, _L_A, _Y_b, _F, _c, _N_c)
+        _srgb_to_ucs = theano.function([rgb, _Y_w, _L_A, _Y_b, _F, _c, _N_c], ucs,
                                        allow_input_downcast=True, on_unused_input='ignore')
-    return _srgb_to_ucs(np.atleast_2d(RGB), L_A, Y_b, F, c, N_c)
+    return _srgb_to_ucs(np.atleast_2d(RGB), Y_w, L_A, Y_b, F, c, N_c)
 
 
 def delta_e(Jab1, Jab2):

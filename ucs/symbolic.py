@@ -7,14 +7,13 @@ import theano.tensor as T
 from .constants import M_CAT02, M_CAT02_inv, M_HPE, sRGB_to_XYZ, Surrounds
 
 
-def srgb_to_ucs(RGB, L_A, Y_b, F, c, N_c):
+def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. (2006)) Jab."""
-    XYZ_w = T.dot([[1, 1, 1]], sRGB_to_XYZ) * 100
+    XYZ_w = T.dot([[1, 1, 1]], sRGB_to_XYZ) * Y_w
     RGB_w = T.dot(XYZ_w, M_CAT02)
     # D = T.clip(F * (1 - (1/3.6) * T.exp((-L_A - 42) / 92)), 0, 1)
     D = [1, 1, 1]  # Discount the illuminant fully
     k = 1 / (5 * L_A + 1)
-    Y_w = T.sum(XYZ_w * [0, 1, 0])
     D_rgb = D * Y_w / RGB_w + 1 - D
     F_L = 0.2 * k**4 * (5 * L_A) + 0.1 * (1 - k**4)**2 * (5 * L_A)**(1/3)
     n = Y_b / Y_w
@@ -28,7 +27,7 @@ def srgb_to_ucs(RGB, L_A, Y_b, F, c, N_c):
     A_w = (T.sum(RGB_aw * [2, 1, 1/20], axis=-1) - 0.305) * N_bb
 
     RGB_linear = T.sgn(RGB) * abs(RGB)**2.2
-    XYZ = T.dot(RGB_linear, sRGB_to_XYZ) * 100
+    XYZ = T.dot(RGB_linear, sRGB_to_XYZ) * Y_w
     RGB_ = T.dot(XYZ, M_CAT02)
     RGB_c = D_rgb * RGB_
     RGB_p = T.dot(T.dot(RGB_c, M_CAT02_inv), M_HPE)
