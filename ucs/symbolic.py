@@ -55,7 +55,7 @@ def srgb_to_ucs(RGB, L_A, Y_b, F, c, N_c):
     M_p = (1 / c_2) * T.log(1 + c_2 * M)
     a_Mp = M_p * T.cos(T.deg2rad(h_p))
     b_Mp = M_p * T.sin(T.deg2rad(h_p))
-    return T.stack([J_p, a_Mp, b_Mp], axis=1)
+    return T.stack([J_p, a_Mp, b_Mp], axis=-1)
 
 
 def delta_e(Jab1, Jab2):
@@ -68,7 +68,7 @@ def jab_to_jmh(Jab):
     J, a, b = Jab[:, 0], Jab[:, 1], Jab[:, 2]
     M = T.sqrt(a**2 + b**2)
     h = T.rad2deg(T.arctan2(b, a))
-    return T.stack([J, M, h], axis=1)
+    return T.stack([J, M, h], axis=-1)
 
 
 def jmh_to_jab(JMh):
@@ -76,7 +76,7 @@ def jmh_to_jab(JMh):
     J, M, h = JMh[:, 0], JMh[:, 1], JMh[:, 2]
     a = M * T.cos(T.deg2rad(h))
     b = M * T.sin(T.deg2rad(h))
-    return T.stack([J, a, b], axis=1)
+    return T.stack([J, a, b], axis=-1)
 
 
 def main():
