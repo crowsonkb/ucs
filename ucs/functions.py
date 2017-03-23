@@ -4,8 +4,8 @@ import numpy as np
 import theano
 import theano.tensor as T
 
-from .constants import EPS, M_SRGB_to_XYZ
-from . import symbolic
+from ucs.constants import EPS, M_SRGB_to_XYZ
+from ucs import symbolic
 
 _srgb_to_ucs = None
 _ucs_to_srgb_grad = None
