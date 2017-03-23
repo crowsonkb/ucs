@@ -14,7 +14,7 @@ setuptools.setup(
     author_email='crowsonkb@gmail.com',
     license='MIT',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
@@ -23,7 +23,7 @@ setuptools.setup(
         'Topic :: Multimedia :: Graphics',
         'Topic :: Scientific/Engineering',
     ],
-    keywords='',
+    keywords='ciecam02 cam02 cam02-ucs color science',
     packages=['ucs'],
     install_requires=(basedir/'requirements.txt').read_text().split('\n'),
 )
