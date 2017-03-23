@@ -7,6 +7,7 @@ import theano.tensor as T
 from . import symbolic
 
 _srgb_to_ucs = None
+_ucs_to_srgb_grad = None
 
 
 def srgb_to_ucs(RGB, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
@@ -20,6 +21,22 @@ def srgb_to_ucs(RGB, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
         _srgb_to_ucs = theano.function([rgb, _Y_w, _L_A, _Y_b, _F, _c, _N_c], ucs,
                                        allow_input_downcast=True, on_unused_input='ignore')
     return _srgb_to_ucs(np.atleast_2d(RGB), Y_w, L_A, Y_b, F, c, N_c)
+
+
+def ucs_to_srgb_grad(X, Jab, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
+    """Gradient at point X (sRGB space) of the distance between the corresponding Jab color
+    and a target Jab color. Descending this gradient will invert srgb_to_ucs()."""
+    global _ucs_to_srgb_grad
+
+    if _ucs_to_srgb_grad is None:
+        _Y_w, _L_A, _Y_b, _F, _c, _N_c = T.scalars('Y_w', 'L_A', 'Y_b', 'F', 'c', 'N_c')
+        x, jab = T.matrices('x', 'jab')
+        jab_x = symbolic.srgb_to_ucs(x, _Y_w, _L_A, _Y_b, _F, _c, _N_c)
+        loss = symbolic.delta_e(jab_x, jab)**2
+        grad_sym = T.grad(loss, x)
+        _ucs_to_srgb_grad = theano.function([x, jab, _Y_w, _L_A, _Y_b, _F, _c, _N_c], grad_sym,
+                                            allow_input_downcast=True, on_unused_input='ignore')
+    return _ucs_to_srgb_grad(np.atleast_2d(X), np.atleast_2d(Jab), Y_w, L_A, Y_b, F, c, N_c)
 
 
 def delta_e(Jab1, Jab2):
