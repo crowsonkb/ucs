@@ -32,10 +32,8 @@ sRGB_to_XYZ = np.float64(
      [0.0193, 0.1192, 0.9505]]).T
 
 
-def srgb_to_ucs(RGB, L_A, Y_b, surround):
+def srgb_to_ucs(RGB, L_A, Y_b, F, c, N_c):
     """Converts an sRGB (gamma=2.2) color to CAM02-UCS (Luo et al. (2006)) Jab."""
-    F, c, N_c = surround
-
     XYZ_w = T.dot([[1, 1, 1]], sRGB_to_XYZ) * 100
     RGB_w = T.dot(XYZ_w, M_CAT02)
     # D = T.clip(F * (1 - (1/3.6) * T.exp((-L_A - 42) / 92)), 0, 1)
@@ -109,8 +107,8 @@ def jmh_to_jab(JMh):
 def main():
     """A simple test case."""
     rgb1, rgb2 = T.matrices('rgb1', 'rgb2')
-    jab1 = srgb_to_ucs(rgb1, 20, 20, Surrounds.AVERAGE)
-    jab2 = srgb_to_ucs(rgb2, 20, 20, Surrounds.AVERAGE)
+    jab1 = srgb_to_ucs(rgb1, 20, 20, *Surrounds.AVERAGE)
+    jab2 = srgb_to_ucs(rgb2, 20, 20, *Surrounds.AVERAGE)
     loss = delta_e(jab1, jab2)**2
     grad_ = T.grad(loss, rgb2)
     grad = theano.function([rgb1, rgb2], grad_)
