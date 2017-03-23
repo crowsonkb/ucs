@@ -25,7 +25,7 @@ def srgb_to_ucs(RGB, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
 
 def ucs_to_srgb_grad(X, Jab, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
     """Gradient at point X (sRGB space) of the distance between the corresponding Jab color
-    and a target Jab color. Descending this gradient will invert srgb_to_ucs()."""
+    and a target Jab color. Descending this gradient will approximately invert srgb_to_ucs()."""
     global _ucs_to_srgb_grad
 
     if _ucs_to_srgb_grad is None:
