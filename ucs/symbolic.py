@@ -12,7 +12,7 @@ def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     XYZ_w = T.dot([[1, 1, 1]], sRGB_to_XYZ) * Y_w
     RGB_w = T.dot(XYZ_w, M_CAT02)
     # D = T.clip(F * (1 - (1/3.6) * T.exp((-L_A - 42) / 92)), 0, 1)
-    D = [1, 1, 1]  # Discount the illuminant fully
+    D = np.array([1, 1, 1])  # Discount the illuminant fully
     k = 1 / (5 * L_A + 1)
     D_rgb = D * Y_w / RGB_w + 1 - D
     F_L = 0.2 * k**4 * (5 * L_A) + 0.1 * (1 - k**4)**2 * (5 * L_A)**(1/3)
@@ -81,8 +81,8 @@ def jmh_to_jab(JMh):
 def main():
     """A simple test case."""
     rgb1, rgb2 = T.matrices('rgb1', 'rgb2')
-    jab1 = srgb_to_ucs(rgb1, 20, 20, **Surrounds.AVERAGE)
-    jab2 = srgb_to_ucs(rgb2, 20, 20, **Surrounds.AVERAGE)
+    jab1 = srgb_to_ucs(rgb1, 100, 20, 20, **Surrounds.AVERAGE)
+    jab2 = srgb_to_ucs(rgb2, 100, 20, 20, **Surrounds.AVERAGE)
     loss = delta_e(jab1, jab2)**2
     grad_ = T.grad(loss, rgb2)
     grad = theano.function([rgb1, rgb2], grad_)
