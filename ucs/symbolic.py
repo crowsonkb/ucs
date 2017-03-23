@@ -1,10 +1,12 @@
 """Implements the CAM02-UCS (Luo et al. (2006)) forward transform symbolically, using Theano."""
 
+# pylint: disable=assignment-from-no-return, too-many-locals
+
 import numpy as np
 import theano
 import theano.tensor as T
 
-from .constants import EPS, floatX, M_CAT02, M_CAT02_inv, M_HPE, M_SRGB_to_XYZ, Surrounds
+from ucs.constants import EPS, floatX, M_CAT02, M_CAT02_inv, M_HPE, M_SRGB_to_XYZ, Surrounds
 
 
 def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
