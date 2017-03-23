@@ -1,4 +1,7 @@
 import numpy as np
+import theano
+
+EPS = np.finfo(theano.config.floatX).eps
 
 
 class Surrounds:

@@ -4,7 +4,7 @@ import numpy as np
 import theano
 import theano.tensor as T
 
-from .constants import M_CAT02, M_CAT02_inv, M_HPE, sRGB_to_XYZ, Surrounds
+from .constants import EPS, M_CAT02, M_CAT02_inv, M_HPE, sRGB_to_XYZ, Surrounds
 
 
 def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
@@ -26,7 +26,7 @@ def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     RGB_aw = 400 * RGB_aw_i / (RGB_aw_i + 27.13) + 0.1
     A_w = (T.sum(RGB_aw * [2, 1, 1/20], axis=-1) - 0.305) * N_bb
 
-    RGB_linear = T.maximum(0, RGB)**2.2
+    RGB_linear = T.maximum(EPS, RGB)**2.2
     XYZ = T.dot(RGB_linear, sRGB_to_XYZ) * Y_w
     RGB_ = T.dot(XYZ, M_CAT02)
     RGB_c = D_rgb * RGB_
