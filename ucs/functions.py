@@ -10,7 +10,7 @@ _srgb_to_ucs = None
 
 
 def srgb_to_ucs(RGB, L_A, Y_b, F, c, N_c):
-    """Converts an sRGB (gamma=2.2) color to CAM02-UCS (Luo et al. (2006)) Jab."""
+    """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. (2006)) Jab."""
     global _srgb_to_ucs
 
     if _srgb_to_ucs is None:
@@ -19,7 +19,7 @@ def srgb_to_ucs(RGB, L_A, Y_b, F, c, N_c):
         ucs = symbolic.srgb_to_ucs(rgb, _L_A, _Y_b, _F, _c, _N_c)
         _srgb_to_ucs = theano.function([rgb, _L_A, _Y_b, _F, _c, _N_c], ucs,
                                        allow_input_downcast=True, on_unused_input='ignore')
-    return _srgb_to_ucs(np.asarray(RGB), L_A, Y_b, F, c, N_c)
+    return _srgb_to_ucs(np.atleast_2d(RGB), L_A, Y_b, F, c, N_c)
 
 
 def delta_e(Jab1, Jab2):

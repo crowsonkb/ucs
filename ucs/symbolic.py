@@ -8,7 +8,7 @@ from .constants import M_CAT02, M_CAT02_inv, M_HPE, sRGB_to_XYZ, Surrounds
 
 
 def srgb_to_ucs(RGB, L_A, Y_b, F, c, N_c):
-    """Converts an sRGB (gamma=2.2) color to CAM02-UCS (Luo et al. (2006)) Jab."""
+    """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. (2006)) Jab."""
     XYZ_w = T.dot([[1, 1, 1]], sRGB_to_XYZ) * 100
     RGB_w = T.dot(XYZ_w, M_CAT02)
     # D = T.clip(F * (1 - (1/3.6) * T.exp((-L_A - 42) / 92)), 0, 1)
