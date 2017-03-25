@@ -1,7 +1,7 @@
 ucs
 ===
 
-Implements the CAM02-UCS (Luo et al. (2006), "Uniform Colour Spaces Based on CIECAM02 Colour Appearance Model") forward transform symbolically, using Theano.
+Implements the CAM02-UCS (Luo et al. (2006), "`Uniform Colour Spaces Based on CIECAM02 Colour Appearance Model <https://s3-us-west-2.amazonaws.com/4843ec7c-89cf-4d26-a36a-0e40ebc9a3a7/luo2006.pdf>`_") forward transform symbolically, using Theano.
 
 See: `CIECAM02 and Its Recent Developments <http://www.springer.com/cda/content/document/cda_downloaddocument/9781441961891-c1.pdf>`_.
 
