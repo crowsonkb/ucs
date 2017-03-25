@@ -49,20 +49,20 @@ def ucs_to_srgb_helper(X, Jab, Y_w, L_A, Y_b, F, c, N_c):
         grad = T.grad(loss, x)
         _ucs_to_srgb_helper = theano.function([x, jab] + conditions, [loss, grad],
                                               allow_input_downcast=True, on_unused_input='ignore')
-    return _ucs_to_srgb_helper(np.atleast_1d(X), np.atleast_1d(Jab), Y_w, L_A, Y_b, F, c, N_c)
+    return _ucs_to_srgb_helper(np.squeeze(X), np.squeeze(Jab), Y_w, L_A, Y_b, F, c, N_c)
 
 
 def ucs_to_srgb(Jab, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
     """Approximately inverts srgb_to_ucs() for a single color."""
     x, _, _ = fmin_l_bfgs_b(ucs_to_srgb_helper, np.float64([0.5, 0.5, 0.5]),
-                            args=(Jab, Y_w, L_A, Y_b, F, c, N_c))
+                            args=(np.squeeze(Jab), Y_w, L_A, Y_b, F, c, N_c))
     return x
 
 
 def ucs_to_srgb_b(Jab, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
     """Approximately inverts srgb_to_ucs() for a single color subject to sRGB gamut limits."""
     x, _, _ = fmin_l_bfgs_b(ucs_to_srgb_helper, np.float64([0.5, 0.5, 0.5]),
-                            args=(Jab, Y_w, L_A, Y_b, F, c, N_c), bounds=[(0, 1)]*3)
+                            args=(np.squeeze(Jab), Y_w, L_A, Y_b, F, c, N_c), bounds=[(0, 1)]*3)
     return x
 
 
