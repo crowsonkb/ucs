@@ -6,11 +6,11 @@ basedir = Path(__file__).resolve().parent
 
 setuptools.setup(
     name='ucs',
-    version='0.1',
+    version='0.2.0',
     description='Implements the CAM02-UCS forward transform symbolically, using Theano.',
     long_description=(basedir/'README.rst').read_text(),
     url='https://github.com/crowsonkb/ucs',
-    download_url='https://github.com/crowsonkb/ucs/archive/0.1.zip',
+    download_url='https://github.com/crowsonkb/ucs/archive/0.2.0.zip',
     author='Katherine Crowson',
     author_email='crowsonkb@gmail.com',
     license='MIT',
