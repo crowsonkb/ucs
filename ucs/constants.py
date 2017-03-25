@@ -14,6 +14,14 @@ class Surrounds:
     DIM = dict(F=0.9, c=0.59, N_c=0.95)
     DARK = dict(F=0.8, c=0.525, N_c=0.8)
 
+
+class Hues:
+    """CIECAM02/CAM02-UCS psychological (primary) hues."""
+    RED = 20.14
+    YELLOW = 90.
+    GREEN = 164.25
+    BLUE = 237.53
+
 M_CAT02 = floatX(
     [[0.7328, 0.4296, -0.1624],
      [-0.7036, 1.6975, 0.0061],
