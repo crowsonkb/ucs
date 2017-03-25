@@ -3,6 +3,7 @@
 import sys
 
 import numpy as np
+from scipy.optimize import fmin_l_bfgs_b
 import theano
 import theano.tensor as T
 
@@ -10,7 +11,7 @@ from ucs.constants import EPS, M_SRGB_to_XYZ
 from ucs import symbolic
 
 _srgb_to_ucs = None
-_ucs_to_srgb_grad = None
+_ucs_to_srgb_helper = None
 
 
 def srgb_to_xyz(RGB):
@@ -33,21 +34,36 @@ def srgb_to_ucs(RGB, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
     return _srgb_to_ucs(np.atleast_2d(RGB), Y_w, L_A, Y_b, F, c, N_c)
 
 
-def ucs_to_srgb_grad(X, Jab, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
-    """Gradient at point X (sRGB space) of the distance between the corresponding Jab color
-    and a target Jab color. Descending this gradient will approximately invert srgb_to_ucs()."""
-    global _ucs_to_srgb_grad
+def ucs_to_srgb_helper(X, Jab, Y_w, L_A, Y_b, F, c, N_c):
+    """Loss and gradient at point X (sRGB space) of the distance between the corresponding
+    Jab color and a target Jab color. Descending this gradient will approximately invert
+    srgb_to_ucs()."""
+    global _ucs_to_srgb_helper
 
-    if _ucs_to_srgb_grad is None:
-        print('Building ucs_to_srgb_grad()...', file=sys.stderr)
+    if _ucs_to_srgb_helper is None:
+        print('Building ucs_to_srgb_helper()...', file=sys.stderr)
         conditions = T.scalars('Y_w', 'L_A', 'Y_b', 'F', 'c', 'N_c')
-        x, jab = T.matrices('x', 'jab')
+        x, jab = T.vectors('x', 'jab')
         jab_x = symbolic.srgb_to_ucs(x, *conditions)
         loss = symbolic.delta_e(jab_x, jab)**2
-        grad_sym = T.grad(loss, x)
-        _ucs_to_srgb_grad = theano.function([x, jab] + conditions, grad_sym,
-                                            allow_input_downcast=True, on_unused_input='ignore')
-    return _ucs_to_srgb_grad(np.atleast_2d(X), np.atleast_2d(Jab), Y_w, L_A, Y_b, F, c, N_c)
+        grad = T.grad(loss, x)
+        _ucs_to_srgb_helper = theano.function([x, jab] + conditions, [loss, grad],
+                                              allow_input_downcast=True, on_unused_input='ignore')
+    return _ucs_to_srgb_helper(np.atleast_1d(X), np.atleast_1d(Jab), Y_w, L_A, Y_b, F, c, N_c)
+
+
+def ucs_to_srgb(Jab, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
+    """Approximately inverts srgb_to_ucs() for a single color."""
+    x, _, _ = fmin_l_bfgs_b(ucs_to_srgb_helper, np.float64([0.5, 0.5, 0.5]),
+                            args=(Jab, Y_w, L_A, Y_b, F, c, N_c))
+    return x
+
+
+def ucs_to_srgb_b(Jab, Y_w=100, L_A=20, Y_b=20, F=1, c=0.69, N_c=1):
+    """Approximately inverts srgb_to_ucs() for a single color subject to sRGB gamut limits."""
+    x, _, _ = fmin_l_bfgs_b(ucs_to_srgb_helper, np.float64([0.5, 0.5, 0.5]),
+                            args=(Jab, Y_w, L_A, Y_b, F, c, N_c), bounds=[(0, 1)]*3)
+    return x
 
 
 def delta_e(Jab1, Jab2):
