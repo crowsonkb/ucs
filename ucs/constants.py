@@ -26,6 +26,9 @@ M_HPE = floatX(
      [-0.22981, 1.1834, 0.04641],
      [0, 0, 1]]).T
 
+# Fix non-unity first row sum
+M_HPE[:, 0] /= np.sum(M_HPE[:, 0])
+
 M_SRGB_to_XYZ = floatX(
     [[0.4124, 0.3576, 0.1805],
      [0.2126, 0.7152, 0.0722],
