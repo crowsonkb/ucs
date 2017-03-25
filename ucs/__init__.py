@@ -2,7 +2,7 @@
 
 import theano, warnings
 if theano.config.floatX != 'float64':
-    warnings.warn('theano.config.floatX is not \'float64\'. It is recommended that the ucs'
+    warnings.warn('theano.config.floatX is not \'float64\'. It is recommended that the ucs '
                   'package be used with Theano in float64 mode.')
 del theano, warnings
 
