@@ -10,7 +10,7 @@ from ucs.constants import EPS, floatX, M_CAT02, M_CAT02_inv, M_HPE, M_SRGB_to_XY
 
 
 def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
-    """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. (2006)) Jab."""
+    """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. 2006) Jab."""
     XYZ_w = T.dot([[1, 1, 1]], M_SRGB_to_XYZ) * Y_w
     RGB_w = T.dot(XYZ_w, M_CAT02)
     # D = T.clip(F * (1 - (1/3.6) * T.exp((-L_A - 42) / 92)), 0, 1)
