@@ -96,7 +96,7 @@ def main():
     print(x)
     for i in range(1500):
         g = grad(target, x)
-        x -= 1e-5 * g
+        x -= 1e-6 * g
         if i % 100 == 99:
             print(x)
 
