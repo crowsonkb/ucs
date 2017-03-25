@@ -11,10 +11,10 @@ from ucs.constants import EPS, floatX, M_CAT02, M_CAT02_inv, M_HPE, M_SRGB_to_XY
 
 def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. (2006)) Jab."""
-    XYZ_w = T.dot(floatX([[1, 1, 1]]), M_SRGB_to_XYZ) * Y_w
+    XYZ_w = T.dot([[1, 1, 1]], M_SRGB_to_XYZ) * Y_w
     RGB_w = T.dot(XYZ_w, M_CAT02)
     # D = T.clip(F * (1 - (1/3.6) * T.exp((-L_A - 42) / 92)), 0, 1)
-    D = floatX([1, 1, 1])  # Discount the illuminant fully
+    D = [1, 1, 1]  # Discount the illuminant fully
     k = 1 / (5 * L_A + 1)
     D_rgb = D * Y_w / RGB_w + 1 - D
     F_L = 0.2 * k**4 * (5 * L_A) + 0.1 * (1 - k**4)**2 * (5 * L_A)**(1/3)
@@ -26,7 +26,7 @@ def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     RGB_wp = T.dot(T.dot(RGB_wc, M_CAT02_inv), M_HPE)
     RGB_aw_i = (F_L * RGB_wp / 100)**0.42
     RGB_aw = 400 * RGB_aw_i / (RGB_aw_i + 27.13) + 0.1
-    A_w = (T.sum(RGB_aw * floatX([2, 1, 1/20]), axis=-1) - 0.305) * N_bb
+    A_w = (T.sum(RGB_aw * [2, 1, 1/20], axis=-1) - 0.305) * N_bb
 
     RGB_linear = T.maximum(EPS, RGB)**2.2
     XYZ = T.dot(RGB_linear, M_SRGB_to_XYZ) * Y_w
@@ -39,16 +39,16 @@ def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     RGB_ap_n = -400 * RGB_ap_n_i / (RGB_ap_n_i + 27.13) + 0.1
     RGB_ap = T.switch(RGB_ap_p > 0, RGB_ap_p, RGB_ap_n)
 
-    a = T.sum(RGB_ap * floatX([1, -12/11, 1/11]), axis=-1)
-    b = T.sum(RGB_ap * floatX([1/9, 1/9, -2/9]), axis=-1)
+    a = T.sum(RGB_ap * [1, -12/11, 1/11], axis=-1)
+    b = T.sum(RGB_ap * [1/9, 1/9, -2/9], axis=-1)
     h = T.rad2deg(T.arctan2(b, a))
     h_p = T.switch(h < 0, h + 360, h)
     e_t = (T.cos(h_p * np.pi / 180 + 2) + 3.8) / 4
 
-    A = (T.sum(RGB_ap * floatX([2, 1, 1/20]), axis=-1) - 0.305) * N_bb
+    A = (T.sum(RGB_ap * [2, 1, 1/20], axis=-1) - 0.305) * N_bb
     J = 100 * T.maximum(0, A / A_w)**(c * z)
     t_num = 50000/13 * N_c * N_cb * e_t * T.sqrt(a**2 + b**2)
-    t = t_num / T.sum(RGB_ap * floatX([1, 1, 21/20]), axis=-1)
+    t = t_num / T.sum(RGB_ap * [1, 1, 21/20], axis=-1)
     C = t**0.9 * T.sqrt(J / 100) * (1.64 - 0.29**n)**0.73
     M = C * F_L**0.25
 
