@@ -37,7 +37,7 @@ def srgb_to_ucs(RGB, Y_w, L_A, Y_b, F, c, N_c):
     RGB_ap_n_i = (-F_L * RGB_p / 100)**0.42
     RGB_ap_p = 400 * RGB_ap_p_i / (RGB_ap_p_i + 27.13) + 0.1
     RGB_ap_n = -400 * RGB_ap_n_i / (RGB_ap_n_i + 27.13) + 0.1
-    RGB_ap = T.switch(RGB_ap_p > 0, RGB_ap_p, RGB_ap_n)
+    RGB_ap = T.switch(RGB_ap_p >= 0, RGB_ap_p, RGB_ap_n)
 
     a = T.sum(RGB_ap * [1, -12/11, 1/11], axis=-1)
     b = T.sum(RGB_ap * [1/9, 1/9, -2/9], axis=-1)
