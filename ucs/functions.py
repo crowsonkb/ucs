@@ -56,16 +56,18 @@ def delta_e(Jab1, Jab2):
 
 
 def jab_to_jmh(Jab):
-    """Converts a rectangular (Jab) CAM02-UCS color to cylindrical (JMh) format."""
-    J, a, b = Jab[:, 0], Jab[:, 1], Jab[:, 2]
+    """Converts rectangular (Jab) CAM02-UCS colors to cylindrical (JMh) format."""
+    Jab = np.atleast_1d(Jab)
+    J, a, b = Jab[..., 0], Jab[..., 1], Jab[..., 2]
     M = np.sqrt(a**2 + b**2)
     h = np.rad2deg(np.arctan2(b, a))
     return np.stack([J, M, h], axis=-1)
 
 
 def jmh_to_jab(JMh):
-    """Converts a cylindrical (JMh) CAM02-UCS color to rectangular (Jab) format."""
-    J, M, h = JMh[:, 0], JMh[:, 1], JMh[:, 2]
+    JMh = np.atleast_1d(JMh)
+    """Converts cylindrical (JMh) CAM02-UCS colors to rectangular (Jab) format."""
+    J, M, h = JMh[..., 0], JMh[..., 1], JMh[..., 2]
     a = M * np.cos(np.deg2rad(h))
     b = M * np.sin(np.deg2rad(h))
     return np.stack([J, a, b], axis=-1)

@@ -66,7 +66,7 @@ def delta_e(Jab1, Jab2):
 
 
 def jab_to_jmh(Jab):
-    """Converts a rectangular (Jab) CAM02-UCS color to cylindrical (JMh) format."""
+    """Converts rectangular (Jab) CAM02-UCS colors to cylindrical (JMh) format."""
     J, a, b = Jab[:, 0], Jab[:, 1], Jab[:, 2]
     M = T.sqrt(a**2 + b**2)
     h = T.rad2deg(T.arctan2(b, a))
@@ -74,7 +74,7 @@ def jab_to_jmh(Jab):
 
 
 def jmh_to_jab(JMh):
-    """Converts a cylindrical (JMh) CAM02-UCS color to rectangular (Jab) format."""
+    """Converts cylindrical (JMh) CAM02-UCS colors to rectangular (Jab) format."""
     J, M, h = JMh[:, 0], JMh[:, 1], JMh[:, 2]
     a = M * T.cos(T.deg2rad(h))
     b = M * T.sin(T.deg2rad(h))
