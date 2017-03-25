@@ -81,8 +81,8 @@ def jab_to_jmh(Jab):
 
 
 def jmh_to_jab(JMh):
-    JMh = np.atleast_1d(JMh)
     """Converts cylindrical (JMh) CAM02-UCS colors to rectangular (Jab) format."""
+    JMh = np.atleast_1d(JMh)
     J, M, h = JMh[..., 0], JMh[..., 1], JMh[..., 2]
     a = M * np.cos(np.deg2rad(h))
     b = M * np.sin(np.deg2rad(h))
