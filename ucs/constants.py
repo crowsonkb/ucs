@@ -1,5 +1,7 @@
 """Constants required by CAM02-UCS or which are otherwise useful."""
 
+from collections import namedtuple
+
 import numpy as np
 import theano
 
@@ -14,13 +16,14 @@ class Surrounds:
     DIM = dict(F=0.9, c=0.59, N_c=0.95)
     DARK = dict(F=0.8, c=0.525, N_c=0.8)
 
+UniqueHue = namedtuple('UniqueHue', 'h, e, H')
 
-class Hues:
-    """CIECAM02/CAM02-UCS psychological (primary) hues."""
-    RED = 20.14
-    YELLOW = 90.
-    GREEN = 164.25
-    BLUE = 237.53
+hues = [None,
+        UniqueHue(20.14, 0.8, 0),
+        UniqueHue(90., 0.7, 100),
+        UniqueHue(164.25, 1., 200),
+        UniqueHue(237.53, 1.2, 300),
+        UniqueHue(380.14, 0.8, 400)]
 
 M_CAT02 = floatX(
     [[0.7328, 0.4296, -0.1624],

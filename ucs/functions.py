@@ -7,11 +7,38 @@ from scipy.optimize import fmin_l_bfgs_b
 import theano
 import theano.tensor as T
 
-from ucs.constants import EPS, M_SRGB_to_XYZ
+from ucs.constants import EPS, hues, M_SRGB_to_XYZ
 from ucs import symbolic
 
 _srgb_to_ucs = None
 _ucs_to_srgb_helper = None
+
+
+def _h_to_H(h):
+    """Converts CIECAM02/CAM02-UCS raw hue angle (h) to hue composition (H)."""
+    h = h % 360
+    if h < hues[1].h:
+        h += 360
+
+    i = 1
+    for i in range(1, 5):
+        if h < hues[i+1].h:
+            break
+
+    H_i_l = (h - hues[i].h) / hues[i].e
+    H_i_r = (hues[i+1].h - h) / hues[i+1].e
+    return hues[i].H + 100 * H_i_l / (H_i_l + H_i_r)
+
+h_to_H = np.vectorize(_h_to_H)
+
+
+def _H_to_h(H):
+    """Converts CIECAM02/CAM02-UCS hue composition (H) to raw hue angle (h)."""
+    x0 = H % 400 * 360 / 400
+    h, _, _ = fmin_l_bfgs_b(lambda x: abs(h_to_H(x) - H), x0, approx_grad=True)
+    return h % 360
+
+H_to_h = np.vectorize(_H_to_h)
 
 
 def srgb_to_xyz(RGB):
