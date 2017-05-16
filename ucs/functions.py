@@ -8,7 +8,7 @@ import theano
 import theano.tensor as T
 
 from ucs.constants import EPS, hues, M_SRGB_to_XYZ
-from ucs import symbolic
+from ucs import Conditions, symbolic
 
 _srgb_to_ucs = None
 _ucs_to_srgb_helper = None
@@ -47,7 +47,7 @@ def srgb_to_xyz(RGB):
     return np.dot(RGB_linear, M_SRGB_to_XYZ)
 
 
-def srgb_to_ucs(RGB, Y_w=80, L_A=16, Y_b=16, F=1, c=0.69, N_c=1):
+def srgb_to_ucs(RGB, conds=None):
     """Converts sRGB (gamma=2.2) colors to CAM02-UCS (Luo et al. (2006)) Jab."""
     global _srgb_to_ucs
 
@@ -58,7 +58,8 @@ def srgb_to_ucs(RGB, Y_w=80, L_A=16, Y_b=16, F=1, c=0.69, N_c=1):
         ucs = symbolic.srgb_to_ucs(rgb, *conditions)
         _srgb_to_ucs = theano.function([rgb] + conditions, ucs,
                                        allow_input_downcast=True, on_unused_input='ignore')
-    return _srgb_to_ucs(np.atleast_2d(RGB), Y_w, L_A, Y_b, F, c, N_c)
+    conds = conds or Conditions()
+    return _srgb_to_ucs(np.atleast_2d(RGB), *list(conds))
 
 
 def ucs_to_srgb_helper(X, Jab, Y_w, L_A, Y_b, F, c, N_c):
@@ -79,17 +80,19 @@ def ucs_to_srgb_helper(X, Jab, Y_w, L_A, Y_b, F, c, N_c):
     return _ucs_to_srgb_helper(np.squeeze(X), np.squeeze(Jab), Y_w, L_A, Y_b, F, c, N_c)
 
 
-def ucs_to_srgb(Jab, Y_w=80, L_A=16, Y_b=16, F=1, c=0.69, N_c=1):
+def ucs_to_srgb(Jab, conds=None):
     """Approximately inverts srgb_to_ucs() for a single color."""
+    conds = conds or Conditions()
     x, _, _ = fmin_l_bfgs_b(ucs_to_srgb_helper, np.float64([0.5, 0.5, 0.5]),
-                            args=(np.squeeze(Jab), Y_w, L_A, Y_b, F, c, N_c))
+                            args=[np.squeeze(Jab)] + list(conds))
     return x
 
 
-def ucs_to_srgb_b(Jab, Y_w=80, L_A=16, Y_b=16, F=1, c=0.69, N_c=1):
+def ucs_to_srgb_b(Jab, conds=None):
     """Approximately inverts srgb_to_ucs() for a single color subject to sRGB gamut limits."""
+    conds = conds or Conditions()
     x, _, _ = fmin_l_bfgs_b(ucs_to_srgb_helper, np.float64([0.5, 0.5, 0.5]),
-                            args=(np.squeeze(Jab), Y_w, L_A, Y_b, F, c, N_c), bounds=[(0, 1)]*3)
+                            args=[np.squeeze(Jab)] + list(conds), bounds=[(0, 1)]*3)
     return x
 
 
